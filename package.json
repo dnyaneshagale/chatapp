@@ -1,0 +1,22 @@
+{
+  "name": "secure-e2e-chat",
+  "version": "1.0.0",
+  "description": "Secure end-to-end encrypted 2-person chat application",
+  "type": "module",
+  "scripts": {
+    "start": "cd server && npm install && npm start",
+    "postinstall": "cd server && npm install"
+  },
+  "keywords": [
+    "chat",
+    "encrypted",
+    "e2e",
+    "websocket",
+    "secure"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

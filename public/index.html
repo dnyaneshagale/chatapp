@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure E2E Encrypted Chat</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Join Screen -->
+    <div id="join-screen" class="screen">
+        <div class="join-container">
+            <div class="header">
+                <h1>🔒 Secure Chat</h1>
+                <p class="subtitle">End-to-End Encrypted Messaging</p>
+            </div>
+
+            <div class="join-form">
+                <div class="form-group">
+                    <label for="session-code">Session Code</label>
+                    <input 
+                        type="text" 
+                        id="session-code" 
+                        placeholder="Enter shared session code (min 8 chars)"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <div class="input-hint">
+                        Both users must enter the same session code
+                    </div>
+                </div>
+
+                <button id="join-btn" class="btn btn-primary">Join Session</button>
+                
+                <div id="join-error" class="error-message"></div>
+
+                <div class="security-info">
+                    <h3>🛡️ Security Features</h3>
+                    <ul>
+                        <li>✅ AES-256-GCM encryption</li>
+                        <li>✅ PBKDF2 key derivation (150k iterations)</li>
+                        <li>✅ Server cannot read your messages</li>
+                        <li>✅ No data stored on server</li>
+                        <li>✅ 2-person sessions only</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="screen hidden">
+        <div class="chat-container">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="header-left">
+                    <h2>🔒 Secure Chat</h2>
+                    <p id="session-info" class="session-code"></p>
+                </div>
+                <div class="header-right">
+                    <span id="peer-status" class="peer-status disconnected">Peer: Waiting...</span>
+                    <button id="leave-btn" class="btn btn-secondary">Leave</button>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div id="messages" class="messages-container">
+                <!-- Messages will be appended here -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div id="typing-indicator" class="typing-indicator">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-text">Peer is typing...</span>
+            </div>
+
+            <!-- Message Input -->
+            <div class="input-container">
+                <input 
+                    type="file" 
+                    id="file-input" 
+                    accept="image/*,application/pdf,.doc,.docx,.txt,.zip"
+                    style="display: none;"
+                >
+                <button id="file-btn" class="btn btn-icon" title="Send file">📎</button>
+                <textarea 
+                    id="message-input" 
+                    placeholder="Type a message..."
+                    rows="1"
+                    autocomplete="off"
+                ></textarea>
+                <button id="send-btn" class="btn btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load modules -->
+    <script type="module" src="js/crypto.js"></script>
+    <script type="module" src="js/socket.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

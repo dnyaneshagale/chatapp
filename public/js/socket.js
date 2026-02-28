@@ -13,6 +13,7 @@ class SocketManager {
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 5;
     this.reconnectDelay = 2000;
+    this.intentionalDisconnect = false; // Track intentional disconnects
   }
 
   /**
@@ -22,6 +23,9 @@ class SocketManager {
   connect() {
     return new Promise((resolve, reject) => {
       try {
+        // Reset intentional disconnect flag when explicitly connecting
+        this.intentionalDisconnect = false;
+        
         // Determine WebSocket URL based on current location
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const host = window.location.host;
@@ -56,8 +60,8 @@ class SocketManager {
           this.isConnected = false;
           this.emit('disconnected');
 
-          // Attempt reconnection if not a clean close
-          if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
+          // Attempt reconnection only if not intentional and not max attempts
+          if (!this.intentionalDisconnect && !event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             console.log(`[Socket] Reconnecting... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
             setTimeout(() => {
@@ -208,6 +212,7 @@ class SocketManager {
    */
   disconnect() {
     if (this.ws) {
+      this.intentionalDisconnect = true; // Mark as intentional
       this.ws.close(1000, 'User disconnected');
       this.ws = null;
       this.isConnected = false;

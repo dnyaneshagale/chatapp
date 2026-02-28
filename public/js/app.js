@@ -14,14 +14,43 @@ class ChatApp {
     this.sessionId = null;
     this.peerConnected = false;
     this.typingTimeout = null;
+    this.isTyping = false; // Track if we're currently showing as typing
     this.fileChunks = new Map(); // Store incoming file chunks
     
+    this.initializeTheme();
     this.initializeElements();
     this.initializeEventListeners();
     this.initializeSocketHandlers();
   }
 
+  initializeTheme() {
+    // Check for saved theme preference or default to 'light'
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    this.updateThemeIcon(savedTheme);
+  }
+
+  updateThemeIcon(theme) {
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeIcon) {
+      themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+  }
+
+  toggleTheme() {
+    const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    root.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    this.updateThemeIcon(newTheme);
+  }
+
   initializeElements() {
+    // Theme toggle (persists across all screens)
+    this.themeToggle = document.getElementById('theme-toggle');
+    
     // Join screen elements
     this.joinScreen = document.getElementById('join-screen');
     this.sessionCodeInput = document.getElementById('session-code');
@@ -42,6 +71,9 @@ class ChatApp {
   }
 
   initializeEventListeners() {
+    // Theme toggle (single button that persists)
+    this.themeToggle.addEventListener('click', () => this.toggleTheme());
+    
     // Join button
     this.joinBtn.addEventListener('click', () => this.joinSession());
     this.sessionCodeInput.addEventListener('keypress', (e) => {
@@ -117,6 +149,12 @@ class ChatApp {
       this.peerConnected = false;
       this.updatePeerStatus(false);
       this.addSystemMessage('Your peer has disconnected.');
+      // Reset typing state
+      this.isTyping = false;
+      if (this.typingTimeout) {
+        clearTimeout(this.typingTimeout);
+        this.typingTimeout = null;
+      }
     });
 
     // Message handlers
@@ -248,7 +286,14 @@ class ChatApp {
       this.messageInput.focus();
 
       // Stop typing indicator
-      socketManager.sendTypingIndicator(false);
+      if (this.isTyping) {
+        socketManager.sendTypingIndicator(false);
+        this.isTyping = false;
+      }
+      if (this.typingTimeout) {
+        clearTimeout(this.typingTimeout);
+        this.typingTimeout = null;
+      }
 
     } catch (error) {
       console.error('[App] Error sending message:', error);
@@ -417,14 +462,19 @@ class ChatApp {
     } catch (error) {
       console.error('[App] Error reassembling file:', error);
       this.addSystemMessage('Failed to reassemble file');
+      // Cleanup failed file transfer
+      this.fileChunks.delete(fileId);
     }
   }
 
   handleTyping() {
     if (!this.peerConnected) return;
 
-    // Send typing indicator
-    socketManager.sendTypingIndicator(true);
+    // Only send typing indicator if we weren't already typing
+    if (!this.isTyping) {
+      socketManager.sendTypingIndicator(true);
+      this.isTyping = true;
+    }
 
     // Clear existing timeout
     if (this.typingTimeout) {
@@ -434,6 +484,7 @@ class ChatApp {
     // Stop typing indicator after 2 seconds of inactivity
     this.typingTimeout = setTimeout(() => {
       socketManager.sendTypingIndicator(false);
+      this.isTyping = false;
     }, 2000);
   }
 
@@ -458,6 +509,11 @@ class ChatApp {
       this.sessionId = null;
       this.peerConnected = false;
       this.fileChunks.clear();
+      this.isTyping = false;
+      if (this.typingTimeout) {
+        clearTimeout(this.typingTimeout);
+        this.typingTimeout = null;
+      }
 
       // Clear messages
       this.messagesContainer.innerHTML = '';
@@ -496,12 +552,15 @@ class ChatApp {
   }
 
   updatePeerStatus(connected) {
+    // Use shorter text on mobile devices
+    const isMobile = window.innerWidth <= 768;
+    
     if (connected) {
-      this.peerStatus.textContent = 'Peer: Connected';
+      this.peerStatus.textContent = isMobile ? 'Connected' : 'Peer: Connected';
       this.peerStatus.classList.add('connected');
       this.peerStatus.classList.remove('disconnected');
     } else {
-      this.peerStatus.textContent = 'Peer: Waiting...';
+      this.peerStatus.textContent = isMobile ? 'Waiting...' : 'Peer: Waiting...';
       this.peerStatus.classList.add('disconnected');
       this.peerStatus.classList.remove('connected');
     }

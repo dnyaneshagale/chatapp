@@ -2,16 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure E2E Encrypted Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>⬛  Shadow Speak - E2E Encrypted</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+        <span id="theme-icon">🌙</span>
+    </button>
+    
     <!-- Join Screen -->
     <div id="join-screen" class="screen">
         <div class="join-container">
             <div class="header">
-                <h1>🔒 Secure Chat</h1>
+                <h1>⬛ Shadow Speak</h1>
                 <p class="subtitle">End-to-End Encrypted Messaging</p>
             </div>
 
@@ -54,11 +62,11 @@
             <!-- Chat Header -->
             <div class="chat-header">
                 <div class="header-left">
-                    <h2>🔒 Secure Chat</h2>
+                    <h2>⬛ Shadow Speak</h2>
                     <p id="session-info" class="session-code"></p>
                 </div>
                 <div class="header-right">
-                    <span id="peer-status" class="peer-status disconnected">Peer: Waiting...</span>
+                    <span id="peer-status" class="peer-status disconnected">Waiting...</span>
                     <button id="leave-btn" class="btn btn-secondary">Leave</button>
                 </div>
             </div>

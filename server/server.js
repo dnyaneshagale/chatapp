@@ -16,7 +16,6 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
 import SessionManager from './sessionManager.js';
-import RateLimiter from './rateLimiter.js';
 
 dotenv.config();
 
@@ -30,7 +29,6 @@ const wss = new WebSocketServer({ server });
 
 // Initialize managers
 const sessionManager = new SessionManager();
-const rateLimiter = new RateLimiter();
 
 // Serve static files from public directory
 app.use(express.static(join(__dirname, '../public')));
@@ -54,15 +52,6 @@ wss.on('connection', (ws, req) => {
 
   ws.on('message', (data) => {
     try {
-      // Rate limit check
-      if (!rateLimiter.checkLimit(connectionId, 'message')) {
-        ws.send(JSON.stringify({
-          type: 'error',
-          message: 'Rate limit exceeded. Please slow down.'
-        }));
-        return;
-      }
-
       const message = JSON.parse(data);
 
       switch (message.type) {
@@ -111,7 +100,6 @@ wss.on('connection', (ws, req) => {
         type: 'peer_disconnected'
       });
     }
-    rateLimiter.reset(connectionId);
   });
 
   ws.on('error', (error) => {
@@ -284,7 +272,6 @@ wss.on('connection', (ws, req) => {
 // Cleanup job - runs every 5 minutes
 setInterval(() => {
   sessionManager.cleanupStaleSessions();
-  rateLimiter.cleanup();
 }, 5 * 60 * 1000);
 
 // Start server

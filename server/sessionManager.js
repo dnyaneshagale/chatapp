@@ -96,7 +96,7 @@ class SessionManager {
 
     // Send to all users in session except sender
     session.users.forEach(ws => {
-      if (ws !== senderWs && ws.readyState === 1) { // 1 = OPEN
+      if (ws !== senderWs && ws.readyState === 1) { // WebSocket.OPEN
         try {
           ws.send(JSON.stringify(encryptedData));
         } catch (error) {

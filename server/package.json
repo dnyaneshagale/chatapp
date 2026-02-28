@@ -1,7 +1,7 @@
 {
-  "name": "secure-chat-server",
+  "name": "dna-chat-enc-server",
   "version": "1.0.0",
-  "description": "Secure end-to-end encrypted 2-person chat server",
+  "description": "DNA Chat - Secure end-to-end encrypted 2-person chat server",
   "main": "server.js",
   "type": "module",
   "scripts": {

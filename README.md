@@ -1,6 +1,6 @@
-# 🔒 Secure E2E Encrypted Chat
+# 🔒 DNA Chat - E2E Encrypted
 
-End-to-end encrypted 2-person chat with file sharing.
+Secure end-to-end encrypted 2-person chat with file sharing.
 
 ## Features
 

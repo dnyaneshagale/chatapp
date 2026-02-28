@@ -1,7 +1,7 @@
 {
-  "name": "secure-e2e-chat",
+  "name": "dna-chat-enc",
   "version": "1.0.0",
-  "description": "Secure end-to-end encrypted 2-person chat application",
+  "description": "DNA Chat - Secure end-to-end encrypted 2-person chat application",
   "type": "module",
   "scripts": {
     "start": "cd server && npm install && npm start",
